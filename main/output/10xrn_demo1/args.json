@@ -1,0 +1,1 @@
+{"Nhf": 50, "optimizer": "adadelta", "data_tag": "ochem_predict_nn/data/lowe_data_edits/lowe", "inner_act": "tanh", "masktest": 0, "nb_epoch": 200, "Nc": 1000, "hybrid": 0, "batch_size": 1, "lr": 0.01, "retrain": false, "fold": 1, "tag": "10xrn_demo", "Nh1": 200, "Nh3": 50, "Nh2": 100, "test": false, "l2": 0.0, "baseline": 0}
