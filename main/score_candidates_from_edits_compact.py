@@ -28,7 +28,7 @@ import time
 from ochem_predict_nn.utils.threadsafe import threadsafe_generator
 from ochem_predict_nn.utils.descriptors import edits_to_vectors, oneHotVector # for testing
 
-def build(F_atom = 1, F_bond = 1, N_h1 = 100, N_h2 = 50, N_h3 = 0, inner_act = 'tanh', l2v = 0.0, lr = 0.0003, N_hf = 20, optimizer = Adadelta(), extra_outputs = False, absolute_score = False):
+def build(F_atom = 1, F_bond = 1, N_h1 = 100, N_h2 = 50, N_h3 = 0, inner_act = 'tanh', l2v = 0.0, lr = 0.0003, N_hf = 20, optimizer = Adadelta(), extra_outputs = False, absolute_score = False, BASELINE_MODEL = False, HYBRID_MODEL = False):
 	'''
 	Builds the feed forward model.
 
@@ -886,7 +886,7 @@ if __name__ == '__main__':
 			outfile.write(model.to_json())
 	except:
 		print('could not write model to json')
-		
+
 	if bool(args.retrain):
 		print('Reloading weights from file')
 		model.load_weights(WEIGHTS_FPATH)
