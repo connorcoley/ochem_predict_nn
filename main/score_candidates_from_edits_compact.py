@@ -880,7 +880,11 @@ if __name__ == '__main__':
 	F_bond = len(b[0])
 
 	model = build(F_atom = F_atom, F_bond = F_bond, N_h1 = N_h1, 
-				N_h2 = N_h2, N_h3 = N_h3, N_hf = N_hf, l2v = l2v, lr = lr, optimizer = opt, inner_act = inner_act)
+				N_h2 = N_h2, N_h3 = N_h3, N_hf = N_hf, 
+				l2v = l2v, lr = lr, optimizer = opt, 
+				inner_act = inner_act,
+				BASELINE_MODEL = BASELINE_MODEL,
+				HYBRID_MODEL = HYBRID_MODEL)
 	try:
 		with open(MODEL_FPATH, 'w') as outfile:
 			outfile.write(model.to_json())
