@@ -55,7 +55,11 @@ def reactants_to_candidate_edits(reactants):
 			outcome = Chem.MolFromSmiles(candidate_smiles)
 				
 			# Find what edits were made
-			edits = summarize_reaction_outcome(reactants, outcome)
+			try:
+				edits = summarize_reaction_outcome(reactants, outcome)
+			except KeyError as e:
+				print('Do you have the custom RDKit version installed? Maybe not...')
+				raise(e)
 			if v: print(edits)
 
 			# Remove mapping before matching
@@ -91,6 +95,7 @@ def preprocess_candidate_edits(reactants, candidate_list):
 	x_h_gain = np.zeros((1, padUpTo, N_e2, F_atom))
 	x_bond_lost = np.zeros((1, padUpTo, N_e3, F_bond))
 	x_bond_gain = np.zeros((1, padUpTo, N_e4, F_bond))
+	x = np.zeros((1, padUpTo, 1024))
 
 	# Get reactant descriptors
 	atom_desc_dict = edits_to_vectors([], reactants, return_atom_desc_dict = True)
@@ -119,6 +124,11 @@ def preprocess_candidate_edits(reactants, candidate_list):
 			if e >= N_e4: continue
 			x_bond_gain[0, c, e, :] = edit_bond_gain
 
+		if BASELINE_MODEL or HYBRID_MODEL:
+			prod = Chem.MolFromSmiles(str(candidate_smiles[c]))
+			if prod is not None:
+				x[0, c, :] = np.array(AllChem.GetMorganFingerprintAsBitVect(prod, 2, nBits = 1024), dtype = bool)
+
 	# Trim down
 	x_h_lost = x_h_lost[:, :, :N_e1_trim, :]
 	x_h_gain = x_h_gain[:, :, :N_e2_trim, :]
@@ -134,6 +144,11 @@ def preprocess_candidate_edits(reactants, candidate_list):
 	x_h_gain[np.isinf(x_h_gain)] = 0.0
 	x_bond_lost[np.isinf(x_bond_lost)] = 0.0
 	x_bond_gain[np.isinf(x_bond_gain)] = 0.0
+
+	if BASELINE_MODEL:
+		return [x] 
+	elif HYBRID_MODEL:
+		return [x_h_lost, x_h_gain, x_bond_lost, x_bond_gain, x]
 
 	return [x_h_lost, x_h_gain, x_bond_lost, x_bond_gain]
 
@@ -199,6 +214,9 @@ if __name__ == '__main__':
 		print('Arguments loaded from saved model:')
 		print(args_dict)
 
+	HYBRID_MODEL = bool(int(args_dict['hybrid']))
+	BASELINE_MODEL = bool(int(args_dict['baseline']))
+
 	try: # usually fails because of custom Theano usage
 		model = model_from_json(open(MODEL_FPATH).read())
 	except NameError:
@@ -206,8 +224,8 @@ if __name__ == '__main__':
 		model = build(F_atom = F_atom, F_bond = F_bond, N_h1 = int(args_dict['Nh1']), 
 			N_h2 = int(args_dict['Nh2']), N_h3 = int(args_dict['Nh3']), N_hf = int(args_dict['Nhf']), 
 			l2v = float(args_dict['l2']), lr = 0.0, optimizer = args_dict['optimizer'], 
-			inner_act = args_dict['inner_act'], HYBRID_MODEL = bool(int(args_dict['hybrid'])), 
-			BASELINE_MODEL = bool(int(args_dict['baseline']))
+			inner_act = args_dict['inner_act'], HYBRID_MODEL = HYBRID_MODEL, 
+			BASELINE_MODEL = BASELINE_MODEL,
 		)
 	model.compile(
 		loss = 'categorical_crossentropy',
