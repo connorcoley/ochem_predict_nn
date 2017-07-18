@@ -232,6 +232,7 @@ if __name__ == '__main__':
 		optimizer = SGD(lr = 0.0),
 		metrics = ['accuracy']
 	)
+	model.load_weights(WEIGHTS_FPATH)
 
 	# Wait for user prompt
 	while True:
