@@ -98,13 +98,13 @@ def preprocess_candidate_edits(reactants, candidate_list):
 	x = np.zeros((1, padUpTo, 1024))
 
 	# Get reactant descriptors
-	atom_desc_dict = edits_to_vectors([], reactants, return_atom_desc_dict = True)
+	atom_desc_dict = edits_to_vectors([], reactants, return_atom_desc_dict = True, ORIGINAL_VERSION = True)
 
 	# Populate arrays
 	for (c, edits) in enumerate(candidate_edits):
 		if c == padUpTo: break
 		edit_h_lost_vec, edit_h_gain_vec, \
-			edit_bond_lost_vec, edit_bond_gain_vec = edits_to_vectors(edits, reactants, atom_desc_dict = atom_desc_dict)
+			edit_bond_lost_vec, edit_bond_gain_vec = edits_to_vectors(edits, reactants, atom_desc_dict = atom_desc_dict, ORIGINAL_VERSION = True)
 
 		N_e1_trim = max(N_e1_trim, len(edit_h_lost_vec))
 		N_e2_trim = max(N_e2_trim, len(edit_h_gain_vec))
@@ -188,7 +188,7 @@ if __name__ == '__main__':
 	ARGS_FPATH = os.path.join(FROOT, 'args.json')
 
 	mol = Chem.MolFromSmiles('[C:1][C:2]')
-	(a, _, b, _) = edits_to_vectors((['1'],[],[('1','2',1.0)],[]), mol)
+	(a, _, b, _) = edits_to_vectors((['1'],[],[('1','2',1.0)],[]), mol, ORIGINAL_VERSION = True)
 	F_atom = len(a[0])
 	F_bond = len(b[0])
 
