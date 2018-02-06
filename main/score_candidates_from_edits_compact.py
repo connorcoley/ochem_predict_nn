@@ -778,11 +778,11 @@ if __name__ == '__main__':
 	parser.add_argument('--nb_epoch', type = int, default = 200,
 						help = 'Max number of epochs to train for, default 200')
 	parser.add_argument('--batch_size', type = int, default = 20,
-						help = 'Batch size, default 200')
+						help = 'Batch size, default 20')
 	parser.add_argument('--Nh1', type = int, default = 200,
-						help = 'Number of hidden nodes in first layer, default 100')
+						help = 'Number of hidden nodes in first layer, default 200')
 	parser.add_argument('--Nh2', type = int, default = 100,
-						help = 'Number of hidden nodes in second layer, default 50')
+						help = 'Number of hidden nodes in second layer, default 100')
 	parser.add_argument('--Nh3', type = int, default = 50,
 						help = 'Number of hidden nodes in third layer, ' + 
 								'immediately before summing, default 50')
